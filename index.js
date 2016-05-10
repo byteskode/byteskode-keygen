@@ -7,6 +7,8 @@
  */
 
 //dependencies
+var async = require('async');
+var _ = require('lodash');
 
 
 exports.productKey = function(payload, options, done) {
