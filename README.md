@@ -15,23 +15,13 @@ $ npm install --save byteskode-keygen
 ```javascript
 var keygen = require('byteskode-keygen');
 
-//generate product key
-keygen.productKey(<payload>,function(error, productKey){
+//generate key
+keygen.key(<payload>, function(error, key){
     ...
 });
 
-//generate licence key
-keygen.licenceKey(<payload>,function(error, licenceKey){
-    ...
-});
-
-//verify product key
-keygen.verifyProductKey(<payload>,<productKey>,function(error, productKey){
-    ...
-});
-
-//verify licence key
-keygen.verifyLicenceKey(<payload>,<productKey>,function(error, productKey){
+//varify key
+keygen.verifyKey(<key>, <options>, function(error, isValid){
     ...
 });
 ```
