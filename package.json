@@ -1,45 +1,46 @@
 {
-    "name": "byteskode-keygen",
-    "version": "0.1.0",
-    "description": "byteskode key generator utility",
-    "main": "index.js",
-    "scripts": {
-        "test": "grunt test"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/byteskode/byteskode-keygen.git"
-    },
-    "keywords": [
-        "mongoose",
-        "mongoose-plugin",
-        "product",
-        "licence",
-        "key"
-    ],
-    "author": {
-        "name": "lykmapipo",
-        "email": "lallyelias87@gmail.com",
-        "url": "https://github.com/lykmapipo"
-    },
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/byteskode/byteskode-keygen/issues"
-    },
-    "homepage": "https://github.com/byteskode/byteskode-keygen",
-    "devDependencies": {
-        "async": "^1.5.0",
-        "chai": "^3.4.1",
-        "grunt": "^0.4.5",
-        "grunt-contrib-jshint": "^0.11.3",
-        "grunt-contrib-watch": "^0.6.1",
-        "grunt-mocha-test": "^0.12.7",
-        "jshint-stylish": "^2.0.1",
-        "mocha": "^2.3.3",
-        "mongoose": "^4.2.5"
-    },
-    "dependencies": {
-        "async": "^1.5.2",
-        "lodash": "^4.12.0"
-    }
+  "name": "byteskode-keygen",
+  "version": "0.1.0",
+  "description": "byteskode key generator utility",
+  "main": "index.js",
+  "scripts": {
+    "test": "grunt test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/byteskode/byteskode-keygen.git"
+  },
+  "keywords": [
+    "mongoose",
+    "mongoose-plugin",
+    "product",
+    "licence",
+    "key"
+  ],
+  "author": {
+    "name": "lykmapipo",
+    "email": "lallyelias87@gmail.com",
+    "url": "https://github.com/lykmapipo"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/byteskode/byteskode-keygen/issues"
+  },
+  "homepage": "https://github.com/byteskode/byteskode-keygen",
+  "devDependencies": {
+    "async": "^1.5.0",
+    "chai": "^3.4.1",
+    "grunt": "^0.4.5",
+    "grunt-contrib-jshint": "^0.11.3",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-test": "^0.12.7",
+    "jshint-stylish": "^2.0.1",
+    "mocha": "^2.3.3",
+    "mongoose": "^4.2.5"
+  },
+  "dependencies": {
+    "async": "^1.5.2",
+    "lodash": "^4.12.0",
+    "macaddress": "^0.2.8"
+  }
 }
