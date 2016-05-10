@@ -13,6 +13,7 @@ var os = require('os');
 var crypto = require('crypto');
 var getmac = require('getmac');
 
+//defaults
 var defaults = {
     encryption: 'md5',
     encoding: 'hex',
@@ -21,9 +22,11 @@ var defaults = {
 
 
 /**
- * @name macs
- * @description obtain host mac addresses
+ * @function
+ * @name mac
+ * @description obtain host mac address
  * @param  {Function} done a callback to invoke on success or error
+ * @public
  */
 exports.mac = function(done) {
     getmac.getMac(done);
@@ -31,9 +34,11 @@ exports.mac = function(done) {
 
 
 /**
+ * @function
  * @name os
  * @description obtain os host details
  * @param  {Function} done a callback to invoke on success or error
+ * @public
  */
 exports.os = function(done) {
     try {
@@ -60,9 +65,11 @@ exports.os = function(done) {
 
 
 /**
+ * @function
  * @name machineId
  * @description generate unique machine id based on os details
  * @param  {Function} done a callback to invoke on success or error
+ * @public
  */
 exports.machineId = function(done) {
     async.waterfall([
@@ -78,18 +85,23 @@ exports.machineId = function(done) {
         },
 
         function generateMachineId(host, mac, next) {
+            try {
+                var hmac = crypto.createHmac(defaults.encryption, mac);
 
-            //concatenate cpu models
-            var cpuModels = host.cpus.map(function(cpu) {
-                return cpu.model;
-            }).join(':');
+                //concatenate cpu models
+                var cpuModels = host.cpus.map(function(cpu) {
+                    return cpu.model;
+                }).join(':');
 
-            //compute based on machine hardware details
-            var id = [cpuModels, mac, host.totalmem].join('|');
+                //compute based on machine hardware details
+                var id = [cpuModels, mac, host.totalmem].join('|');
 
-            id = crypto.createHash('md5').update(id).digest('hex');
+                id = hmac.update(id).digest(defaults.encoding);
 
-            next(null, id);
+                next(null, id);
+            } catch (e) {
+                next(e);
+            }
 
         }
 
@@ -98,6 +110,14 @@ exports.machineId = function(done) {
 };
 
 
+/**
+ * @function
+ * @name key
+ * @description generate key
+ * @param  {[type]}   options payload used to generate key
+ * @param  {Function} done    a callback to invoke on success or error
+ * @public
+ */
 exports.key = function(options, done) {
     //normalize arguments
     if (options && _.isFunction(options)) {
@@ -115,8 +135,8 @@ exports.key = function(options, done) {
             exports.machineId(next);
         },
 
-        function generateProductKey(machineId, next) {
-            //generate product key
+        function generateKey(machineId, next) {
+            //generate key
             try {
                 var hmac = crypto.createHmac(options.encryption, options.secret);
 
@@ -143,6 +163,15 @@ exports.key = function(options, done) {
 };
 
 
+/**
+ * @function
+ * @name verifyKey
+ * @description verify given key
+ * @param  {String}   key     a valid key
+ * @param  {Object}   options initial payload used to generate key
+ * @param  {Function} done    a callback to invoke on success or error
+ * @public
+ */
 exports.verifyKey = function(key, options, done) {
     //normalize arguments
     if (options && _.isFunction(options)) {

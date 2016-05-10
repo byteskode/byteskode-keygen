@@ -2,6 +2,7 @@
 
 //dependencies
 var path = require('path');
+var async = require('async');
 var expect = require('chai').expect;
 var keygen = require(path.join(__dirname, '..'));
 
@@ -48,6 +49,24 @@ describe('keygen', function() {
         });
     });
 
+    it('should return same machine id even when called multiple times', function(done) {
+        function getMachineId(next) {
+            keygen.machineId(next);
+        }
+
+        async.parallel([
+            getMachineId, getMachineId, getMachineId
+        ], function(error, machineIds) {
+            //asserts
+            expect(error).to.not.exist;
+            expect(machineIds[0]).to.equal(machineIds[1]);
+            expect(machineIds[0]).to.equal(machineIds[2]);
+            expect(machineIds[1]).to.equal(machineIds[2]);
+
+            done(error, machineIds);
+        });
+    });
+
     it('should be able to generate key', function(done) {
         keygen.key(function(error, productKey) {
             //assert
@@ -63,8 +82,26 @@ describe('keygen', function() {
             //assert
             expect(error).to.not.exist;
             expect(isValid).to.be.true;
-            
+
             done(error, isValid);
+        });
+    });
+
+    it('should return same key even when called multiple times', function(done) {
+        function getKey(next) {
+            keygen.key({ data: { uuid: '123dr34' } }, next);
+        }
+
+        async.parallel([
+            getKey, getKey, getKey
+        ], function(error, keys) {
+            //asserts
+            expect(error).to.not.exist;
+            expect(keys[0]).to.equal(keys[1]);
+            expect(keys[0]).to.equal(keys[2]);
+            expect(keys[1]).to.equal(keys[2]);
+
+            done(error, keys);
         });
     });
 
