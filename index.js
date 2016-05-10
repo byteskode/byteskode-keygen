@@ -1,6 +1,7 @@
 'use strict';
 
 /**
+ * @module byteskode-keygen
  * @name byteskode-keygen
  * @description byteskode key generator utility
  * @singleton
@@ -66,12 +67,12 @@ exports.os = function(done) {
 
 /**
  * @function
- * @name machineId
+ * @name machine
  * @description generate unique machine id based on os details
  * @param  {Function} done a callback to invoke on success or error
  * @public
  */
-exports.machineId = function(done) {
+exports.machine = function(done) {
     async.waterfall([
 
         function getHostDetails(next) {
@@ -112,13 +113,13 @@ exports.machineId = function(done) {
 
 /**
  * @function
- * @name key
+ * @name generate
  * @description generate key
- * @param  {[type]}   options payload used to generate key
+ * @param  {Object}   options payload used to generate key
  * @param  {Function} done    a callback to invoke on success or error
  * @public
  */
-exports.key = function(options, done) {
+exports.generate = function(options, done) {
     //normalize arguments
     if (options && _.isFunction(options)) {
         done = options;
@@ -132,7 +133,7 @@ exports.key = function(options, done) {
     async.waterfall([
 
         function getMachineId(next) {
-            exports.machineId(next);
+            exports.machine(next);
         },
 
         function generateKey(machineId, next) {
@@ -165,14 +166,14 @@ exports.key = function(options, done) {
 
 /**
  * @function
- * @name verifyKey
+ * @name verify
  * @description verify given key
  * @param  {String}   key     a valid key
  * @param  {Object}   options initial payload used to generate key
  * @param  {Function} done    a callback to invoke on success or error
  * @public
  */
-exports.verifyKey = function(key, options, done) {
+exports.verify = function(key, options, done) {
     //normalize arguments
     if (options && _.isFunction(options)) {
         done = options;
@@ -182,7 +183,7 @@ exports.verifyKey = function(key, options, done) {
     async.waterfall([
 
         function generateKey(next) {
-            exports.key(options, next);
+            exports.generate(options, next);
         },
 
         function compare(generateKey, next) {

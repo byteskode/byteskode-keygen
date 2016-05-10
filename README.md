@@ -16,12 +16,12 @@ $ npm install --save byteskode-keygen
 var keygen = require('byteskode-keygen');
 
 //generate key
-keygen.key(<payload>, function(error, key){
+keygen.generate(<payload>, function(error, key){
     ...
 });
 
 //varify key
-keygen.verifyKey(<key>, <options>, function(error, isValid){
+keygen.verify(<key>, <options>, function(error, isValid){
     ...
 });
 ```

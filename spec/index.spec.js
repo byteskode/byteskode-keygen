@@ -41,7 +41,7 @@ describe('keygen', function() {
 
 
     it('should be able to generate unique machine id', function(done) {
-        keygen.machineId(function(error, machineId) {
+        keygen.machine(function(error, machineId) {
             //assert
             expect(error).to.not.exist;
             expect(machineId).to.exist;
@@ -51,7 +51,7 @@ describe('keygen', function() {
 
     it('should return same machine id even when called multiple times', function(done) {
         function getMachineId(next) {
-            keygen.machineId(next);
+            keygen.machine(next);
         }
 
         async.parallel([
@@ -68,7 +68,7 @@ describe('keygen', function() {
     });
 
     it('should be able to generate key', function(done) {
-        keygen.key(function(error, productKey) {
+        keygen.generate(function(error, productKey) {
             //assert
             expect(error).to.not.exist;
             expect(productKey).to.exist;
@@ -78,7 +78,7 @@ describe('keygen', function() {
     });
 
     it('should be able to verify key', function(done) {
-        keygen.verifyKey(key, function(error, isValid) {
+        keygen.verify(key, function(error, isValid) {
             //assert
             expect(error).to.not.exist;
             expect(isValid).to.be.true;
@@ -89,7 +89,7 @@ describe('keygen', function() {
 
     it('should return same key even when called multiple times', function(done) {
         function getKey(next) {
-            keygen.key({ data: { uuid: '123dr34' } }, next);
+            keygen.generate({ data: { uuid: '123dr34' } }, next);
         }
 
         async.parallel([
