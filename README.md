@@ -20,8 +20,23 @@ keygen.generate(<payload>, function(error, key){
     ...
 });
 
-//varify key
+//verify key
 keygen.verify(<key>, <options>, function(error, isValid){
+    ...
+});
+
+//obtain machine id
+keygen.machine(function(error, machineId){
+    ...
+})
+
+//obtain host os details
+keygen.os(function(error, os){
+    ...
+});
+
+//obtain mac address of a machine
+keygen.mac(function(error, mac){
     ...
 });
 ```
