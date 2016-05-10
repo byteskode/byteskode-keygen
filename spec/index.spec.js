@@ -6,6 +6,7 @@ var expect = require('chai').expect;
 var keygen = require(path.join(__dirname, '..'));
 
 describe('keygen', function() {
+    var key;
 
     it('should be able to obtain host os details', function(done) {
         keygen.os(function(error, os) {
@@ -47,10 +48,23 @@ describe('keygen', function() {
         });
     });
 
-    it('should be able to generate product key', function(done) {
-        keygen.productKey(function(error, productKey) {
-            console.log(productKey.length);
+    it('should be able to generate key', function(done) {
+        keygen.key(function(error, productKey) {
+            //assert
+            expect(error).to.not.exist;
+            expect(productKey).to.exist;
+            key = productKey;
             done(error, productKey);
+        });
+    });
+
+    it('should be able to verify key', function(done) {
+        keygen.verifyKey(key, function(error, isValid) {
+            //assert
+            expect(error).to.not.exist;
+            expect(isValid).to.be.true;
+            
+            done(error, isValid);
         });
     });
 

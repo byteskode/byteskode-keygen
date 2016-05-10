@@ -14,8 +14,9 @@ var crypto = require('crypto');
 var getmac = require('getmac');
 
 var defaults = {
-    encryption: 'sha256',
-    encoding: 'hex'
+    encryption: 'md5',
+    encoding: 'hex',
+    secret: 'HFGK!LD^SDHK~T012_?3DS5&*34GDW!;1120..SD823'
 };
 
 
@@ -97,7 +98,7 @@ exports.machineId = function(done) {
 };
 
 
-exports.productKey = function(options, done) {
+exports.key = function(options, done) {
     //normalize arguments
     if (options && _.isFunction(options)) {
         done = options;
@@ -117,9 +118,14 @@ exports.productKey = function(options, done) {
         function generateProductKey(machineId, next) {
             //generate product key
             try {
-                var hmac = crypto.createHmac(options.encryption, machineId);
+                var hmac = crypto.createHmac(options.encryption, options.secret);
 
-                if (options.data && Object.keys(options.data) > 0) {
+                //extend options with issuer machine id
+                options.data = _.merge({}, options.data, {
+                    mid: machineId
+                });
+
+                if (!_.isEmpty(options.data)) {
                     hmac.update(JSON.stringify(options.data));
                 }
 
@@ -137,14 +143,23 @@ exports.productKey = function(options, done) {
 };
 
 
-exports.verifyProductKey = function( /*payload, options, done*/ ) {
-    // body...
-};
+exports.verifyKey = function(key, options, done) {
+    //normalize arguments
+    if (options && _.isFunction(options)) {
+        done = options;
+        options = {};
+    }
 
-exports.licenceKey = function( /*payload, options, done*/ ) {
-    // body...
-};
+    async.waterfall([
 
-exports.verifyLicenceKey = function( /*payload, options, done*/ ) {
-    // body...
+        function generateKey(next) {
+            exports.key(options, next);
+        },
+
+        function compare(generateKey, next) {
+            var match = (key && generateKey) && (generateKey === key);
+            next(null, match);
+        }
+
+    ], done);
 };
