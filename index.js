@@ -8,14 +8,16 @@
 
 //dependencies
 var async = require('async');
-// var _ = require('lodash');
+var _ = require('lodash');
 var os = require('os');
 var crypto = require('crypto');
 var getmac = require('getmac');
 
-//----------------
-// utilities
-//----------------
+var defaults = {
+    encryption: 'sha256',
+    encoding: 'hex'
+};
+
 
 /**
  * @name macs
@@ -95,8 +97,43 @@ exports.machineId = function(done) {
 };
 
 
-exports.productKey = function( /*payload, options, done*/ ) {
-    // body...
+exports.productKey = function(options, done) {
+    //normalize arguments
+    if (options && _.isFunction(options)) {
+        done = options;
+        options = {};
+    }
+
+    //merge options
+    options = _.merge({}, defaults, options);
+
+
+    async.waterfall([
+
+        function getMachineId(next) {
+            exports.machineId(next);
+        },
+
+        function generateProductKey(machineId, next) {
+            //generate product key
+            try {
+                var hmac = crypto.createHmac(options.encryption, machineId);
+
+                if (options.data && Object.keys(options.data) > 0) {
+                    hmac.update(JSON.stringify(options.data));
+                }
+
+                var productKey = hmac.digest(options.encoding);
+                next(null, productKey);
+
+            } catch (e) {
+                next(e);
+            }
+
+        }
+
+    ], done);
+
 };
 
 

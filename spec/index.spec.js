@@ -30,6 +30,7 @@ describe('keygen', function() {
 
     it('should be able to get host mac address', function(done) {
         keygen.mac(function(error, mac) {
+            //assert
             expect(error).to.not.exist;
             expect(mac).to.exist;
             done(error, mac);
@@ -39,8 +40,17 @@ describe('keygen', function() {
 
     it('should be able to generate unique machine id', function(done) {
         keygen.machineId(function(error, machineId) {
-            console.log(machineId);
+            //assert
+            expect(error).to.not.exist;
+            expect(machineId).to.exist;
             done(error, machineId);
+        });
+    });
+
+    it('should be able to generate product key', function(done) {
+        keygen.productKey(function(error, productKey) {
+            console.log(productKey.length);
+            done(error, productKey);
         });
     });
 
