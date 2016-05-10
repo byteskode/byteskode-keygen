@@ -22,17 +22,25 @@ describe('keygen', function() {
             expect(os.tmpdir).to.exist;
             expect(os.totalmem).to.exist;
             expect(os.type).to.exist;
+            expect(os.uptime).to.exist;
 
             done(error, os);
         });
     });
 
-    it('should be able to get host mac addresses', function(done) {
-        keygen.macs(function(error, macs) {
+    it('should be able to get host mac address', function(done) {
+        keygen.mac(function(error, mac) {
             expect(error).to.not.exist;
-            expect(macs).to.exist;
-            expect(Object.keys(macs)).to.have.length.above(0);
-            done(error, macs);
+            expect(mac).to.exist;
+            done(error, mac);
+        });
+    });
+
+
+    it('should be able to generate unique machine id', function(done) {
+        keygen.machineId(function(error, machineId) {
+            console.log(machineId);
+            done(error, machineId);
         });
     });
 

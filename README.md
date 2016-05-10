@@ -50,6 +50,7 @@ $ npm test
 ```
 
 ## References
+- [Hash Function](https://en.wikipedia.org/wiki/Hash_function)
 - [Product Key](https://en.wikipedia.org/wiki/Product_key)
 - [Product Activation](https://en.wikipedia.org/wiki/Product_activation)
 - [Digital Rights Management](https://en.wikipedia.org/wiki/Digital_rights_management)
