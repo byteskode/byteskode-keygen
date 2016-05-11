@@ -1,6 +1,6 @@
 {
     "name": "byteskode-keygen",
-    "version": "0.1.0",
+    "version": "0.2.0",
     "description": "byteskode key generator utility",
     "main": "index.js",
     "scripts": {
@@ -11,11 +11,12 @@
         "url": "https://github.com/byteskode/byteskode-keygen.git"
     },
     "keywords": [
-        "mongoose",
-        "mongoose-plugin",
+        "hmac",
+        "activation",
         "product",
         "licence",
-        "key"
+        "key",
+        "verification"
     ],
     "author": {
         "name": "lykmapipo",
