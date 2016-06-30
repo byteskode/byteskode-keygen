@@ -14,8 +14,8 @@ var os = require('os');
 var crypto = require('crypto');
 var getmac = require('getmac');
 
-//defaults
-var defaults = {
+//options
+exports.options = {
     encryption: 'md5', //encryption algorithm
     encoding: 'hex', //encoding format
     keyLength: 20, //default key length
@@ -92,7 +92,7 @@ exports.machine = function(done) {
         function generateMachineId(host, mac, next) {
             try {
 
-                var hmac = crypto.createHmac(defaults.encryption, mac);
+                var hmac = crypto.createHmac(exports.options.encryption, mac);
 
                 //concatenate cpu models
                 var cpuModels = host.cpus.map(function(cpu) {
@@ -102,7 +102,7 @@ exports.machine = function(done) {
                 //compute based on machine hardware details
                 var id = [cpuModels, mac, host.totalmem].join('|');
 
-                id = hmac.update(id).digest(defaults.encoding);
+                id = hmac.update(id).digest(exports.options.encoding);
 
                 next(null, id);
             } catch (e) {
@@ -120,28 +120,16 @@ exports.machine = function(done) {
  * @function
  * @name generate
  * @description generate key
- * @param  {Object}   options payload used to generate key
+ * @param  {Object}   data payload used to generate key
  * @param  {Function} done    a callback to invoke on success or error
  * @public
  */
-exports.generate = function(data, options, done) {
+exports.generate = function(data, done) {
     //normalize arguments
     if (data && _.isFunction(data)) {
         done = data;
-        options = {};
         data = {};
     }
-
-    if (options && _.isFunction(options)) {
-        done = options;
-        options = {};
-    }
-
-    //normalize data
-    data = data || {};
-
-    //merge default options
-    options = _.merge({}, defaults, options);
 
 
     async.waterfall([
@@ -154,36 +142,53 @@ exports.generate = function(data, options, done) {
             //generate key
             try {
                 //use machineId as secret key if non provided
-                options.secret = options.secret || machineId;
+                exports.options.secret =
+                    exports.options.secret || machineId;
 
-                var hmac =
-                    crypto.createHmac(options.encryption, options.secret);
+                var hmac = crypto.createHmac(
+                    exports.options.encryption,
+                    exports.options.secret
+                );
 
-                //extend options with issuer machine id
-                options.data = _.merge({}, data, {
+                //extend data with issuer machine id
+                data = _.merge({}, data, {
                     machineId: machineId
                 });
 
-                if (!_.isEmpty(data)) {
-                    hmac.update(JSON.stringify(data));
-                }
+                hmac.update(JSON.stringify(data));
 
-                var key = hmac.digest(options.encoding);
+                var key = hmac.digest(exports.options.encoding);
 
-                //obtain key length
+                //obtain generated key length
                 var keyLength = key.length;
 
                 //prepare key
-                if (keyLength > options.keyLength) {
+                if (keyLength > exports.options.keyLength) {
 
-                    var remainLength = keyLength - options.keyLength;
+                    var remainLength = keyLength - exports.options.keyLength;
                     var prefixLength = Math.floor(remainLength / 2);
 
+                    //prepare key prefix
+                    var prefix = key.substring(0, prefixLength);
+
+                    //prepare key suffix
+                    var suffix =
+                        key.substring(
+                            (exports.options.keyLength + prefixLength),
+                            key.length
+                        );
+
+                    //the actul key
+                    var _key = key.substring(
+                        prefixLength,
+                        (exports.options.keyLength + prefixLength)
+                    );
+
                     key = {
-                        prefix: key.substring(0, prefixLength),
-                        key: key.substring(prefixLength, (options.keyLength + prefixLength)),
-                        suffix: key.substring((options.keyLength + prefixLength), key.length),
-                        secret: options.secret
+                        prefix: prefix,
+                        key: _key,
+                        suffix: suffix,
+                        secret: exports.options.secret
                     };
 
                 } else {
@@ -191,12 +196,12 @@ exports.generate = function(data, options, done) {
                         key: key,
                         prefix: null,
                         suffix: null,
-                        secret: options.secret
+                        secret: exports.options.secret
                     };
                 }
 
                 //format keys
-                if (options.format) {
+                if (exports.options.format) {
 
                     //format prefix
                     if (!_.isEmpty(key.prefix)) {
@@ -211,7 +216,8 @@ exports.generate = function(data, options, done) {
                     //format key
                     if (!_.isEmpty(key.key)) {
                         key.key =
-                            _(key.key).chunk(options.chunkSize).map(function(chunk) {
+                            _(key.key).chunk(exports.options.chunkSize)
+                            .map(function(chunk) {
                                 return chunk.join('');
                             }).join('-').toUpperCase();
                     }
@@ -236,21 +242,21 @@ exports.generate = function(data, options, done) {
  * @name verify
  * @description verify given key
  * @param  {String}   key     a valid key
- * @param  {Object}   options initial payload used to generate key
+ * @param  {Object}   data initial payload used to generate key
  * @param  {Function} done    a callback to invoke on success or error
  * @public
  */
-exports.verify = function(key, options, done) {
+exports.verify = function(key, data, done) {
     //normalize arguments
-    if (options && _.isFunction(options)) {
-        done = options;
-        options = {};
+    if (data && _.isFunction(data)) {
+        done = data;
+        data = {};
     }
 
     async.waterfall([
 
         function generateKey(next) {
-            exports.generate(options, next);
+            exports.generate(data, next);
         },
 
         function compare(generateKey, next) {
