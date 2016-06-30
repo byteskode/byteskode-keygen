@@ -16,9 +16,13 @@ var getmac = require('getmac');
 
 //defaults
 var defaults = {
-    encryption: 'md5',
-    encoding: 'hex',
-    secret: 'HFGK!LD^SDHK~T012_?3DS5&*34GDW!;1120..SD823'
+    encryption: 'md5', //encryption algorithm
+    encoding: 'hex', //encoding format
+    keyLength: 20, //default key length
+    chunkSize: 4, //chuck of keys to be formatted
+    format: true, //format generated key
+    separator: '-', //key separator 
+    secret: undefined //encyption key default to machine id
 };
 
 
@@ -87,6 +91,7 @@ exports.machine = function(done) {
 
         function generateMachineId(host, mac, next) {
             try {
+
                 var hmac = crypto.createHmac(defaults.encryption, mac);
 
                 //concatenate cpu models
@@ -119,14 +124,23 @@ exports.machine = function(done) {
  * @param  {Function} done    a callback to invoke on success or error
  * @public
  */
-exports.generate = function(options, done) {
+exports.generate = function(data, options, done) {
     //normalize arguments
+    if (data && _.isFunction(data)) {
+        done = data;
+        options = {};
+        data = {};
+    }
+
     if (options && _.isFunction(options)) {
         done = options;
         options = {};
     }
 
-    //merge options
+    //normalize data
+    data = data || {};
+
+    //merge default options
     options = _.merge({}, defaults, options);
 
 
@@ -139,19 +153,72 @@ exports.generate = function(options, done) {
         function generateKey(machineId, next) {
             //generate key
             try {
-                var hmac = crypto.createHmac(options.encryption, options.secret);
+                //use machineId as secret key if non provided
+                options.secret = options.secret || machineId;
+
+                var hmac =
+                    crypto.createHmac(options.encryption, options.secret);
 
                 //extend options with issuer machine id
-                options.data = _.merge({}, options.data, {
-                    mid: machineId
+                options.data = _.merge({}, data, {
+                    machineId: machineId
                 });
 
-                if (!_.isEmpty(options.data)) {
-                    hmac.update(JSON.stringify(options.data));
+                if (!_.isEmpty(data)) {
+                    hmac.update(JSON.stringify(data));
                 }
 
-                var productKey = hmac.digest(options.encoding);
-                next(null, productKey);
+                var key = hmac.digest(options.encoding);
+
+                //obtain key length
+                var keyLength = key.length;
+
+                //prepare key
+                if (keyLength > options.keyLength) {
+
+                    var remainLength = keyLength - options.keyLength;
+                    var prefixLength = Math.floor(remainLength / 2);
+
+                    key = {
+                        prefix: key.substring(0, prefixLength),
+                        key: key.substring(prefixLength, (options.keyLength + prefixLength)),
+                        suffix: key.substring((options.keyLength + prefixLength), key.length),
+                        secret: options.secret
+                    };
+
+                } else {
+                    key = {
+                        key: key,
+                        prefix: null,
+                        suffix: null,
+                        secret: options.secret
+                    };
+                }
+
+                //format keys
+                if (options.format) {
+
+                    //format prefix
+                    if (!_.isEmpty(key.prefix)) {
+                        key.prefix = key.prefix.toUpperCase();
+                    }
+
+                    //format suffix
+                    if (!_.isEmpty(key.suffix)) {
+                        key.prefix = key.prefix.toUpperCase();
+                    }
+
+                    //format key
+                    if (!_.isEmpty(key.key)) {
+                        key.key =
+                            _(key.key).chunk(options.chunkSize).map(function(chunk) {
+                                return chunk.join('');
+                            }).join('-').toUpperCase();
+                    }
+
+                }
+
+                next(null, key);
 
             } catch (e) {
                 next(e);
