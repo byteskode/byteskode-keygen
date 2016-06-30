@@ -210,7 +210,7 @@ exports.generate = function(data, done) {
 
                     //format suffix
                     if (!_.isEmpty(key.suffix)) {
-                        key.prefix = key.prefix.toUpperCase();
+                        key.suffix = key.suffix.toUpperCase();
                     }
 
                     //format key

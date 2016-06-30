@@ -71,12 +71,12 @@ describe('keygen', function() {
     });
 
     it('should be able to generate key', function(done) {
-        keygen.generate(data, function(error, productKey) {
+        keygen.generate(data, function(error, _key) {
             //assert
             expect(error).to.not.exist;
-            expect(productKey).to.exist;
-            key = productKey;
-            done(error, productKey);
+            expect(_key).to.exist;
+            key = _key;
+            done(error, key);
         });
     });
 
