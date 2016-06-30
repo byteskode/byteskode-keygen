@@ -8,6 +8,9 @@ var keygen = require(path.join(__dirname, '..'));
 
 describe('keygen', function() {
     var key;
+    var data = {
+        uuid: '123dr34'
+    };
 
     it('should be able to obtain host os details', function(done) {
         keygen.os(function(error, os) {
@@ -68,9 +71,7 @@ describe('keygen', function() {
     });
 
     it('should be able to generate key', function(done) {
-        keygen.generate({
-            uuid: '123dr34'
-        }, function(error, productKey) {
+        keygen.generate(data, function(error, productKey) {
             //assert
             expect(error).to.not.exist;
             expect(productKey).to.exist;
@@ -79,8 +80,8 @@ describe('keygen', function() {
         });
     });
 
-    it.skip('should be able to verify key', function(done) {
-        keygen.verify(key, function(error, isValid) {
+    it('should be able to verify key', function(done) {
+        keygen.verify(key, data, function(error, isValid) {
             //assert
             expect(error).to.not.exist;
             expect(isValid).to.be.true;
@@ -91,9 +92,7 @@ describe('keygen', function() {
 
     it('should return same key even when called multiple times', function(done) {
         function getKey(next) {
-            keygen.generate({
-                uuid: '123dr34'
-            }, next);
+            keygen.generate(data, next);
         }
 
         async.parallel([

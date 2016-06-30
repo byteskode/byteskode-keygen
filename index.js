@@ -254,7 +254,13 @@ exports.verify = function(key, options, done) {
         },
 
         function compare(generateKey, next) {
-            var match = (key && generateKey) && (generateKey === key);
+
+            var match = (key && generateKey) &&
+                (generateKey.key === key.key) &&
+                (generateKey.prefix === key.prefix) &&
+                (generateKey.suffix === key.suffix) &&
+                (generateKey.secret === key.secret);
+
             next(null, match);
         }
 
