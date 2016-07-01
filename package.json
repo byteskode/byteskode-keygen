@@ -36,12 +36,11 @@
         "grunt-contrib-watch": "^0.6.1",
         "grunt-mocha-test": "^0.12.7",
         "jshint-stylish": "^2.0.1",
-        "mocha": "^2.3.3",
-        "mongoose": "^4.2.5"
+        "mocha": "^2.5.3"
     },
     "dependencies": {
         "async": "^1.5.2",
         "getmac": "^1.2.1",
-        "lodash": "^4.12.0"
+        "lodash": "^4.13.1"
     }
 }
