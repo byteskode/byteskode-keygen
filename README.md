@@ -21,25 +21,62 @@ keygen.generate(<payload>, function(error, key){
 });
 
 //verify key
-keygen.verify(<key>, <options>, function(error, isValid){
-    ...
-});
-
-//obtain machine id
-keygen.machine(function(error, machineId){
-    ...
-})
-
-//obtain host os details
-keygen.os(function(error, os){
-    ...
-});
-
-//obtain mac address of a machine
-keygen.mac(function(error, mac){
+keygen.verify(<key>, <payload>, function(error, isValid){
     ...
 });
 ```
+
+## Options
+Internal configuration of `byteskode-keygen` can be altered by set a value to a specific options. The structure of the options is
+
+```js
+{
+    encryption: 'md5', //encryption algorithm
+    encoding: 'hex', //encoding format
+    keyLength: 20, //default key length
+    chunkSize: 4, //chuck of keys to be formatted
+    format: true, //format generated key
+    separator: '-', //key separator 
+    secret: undefined //encyption key default to machine id
+}
+```
+
+To alter any configuration just pass your option overrides as
+
+```js
+var keygen = require('byteskode-keygen');
+
+//change encryption algorithm
+keygen.options.encryption = 'sha256';
+```
+
+To restore default settings
+
+```js
+var keygen = require('byteskode-keygen');
+
+keygen.restore();
+```
+
+## Structure
+The structure of the key generated is
+
+```js
+{ 
+  prefix: 'E43427',
+  key: '5540-7479-75D9-D0F9-2C6F',
+  suffix: 'D2639D',
+  secret: 'be9d373a4e73de831216c228cb729c71' 
+}
+```
+
+Where
+
+- `prefix` - Part of the key extracted to be used as prefix in verification
+- `key` - The actual key with default length of 20 characters
+- `suffix` - Part of the key extracted to be used as suffix in verification
+- `secret` - A secret key used in generating a key
+
 
 ## Testing
 * Clone this repository
