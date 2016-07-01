@@ -14,8 +14,7 @@ var os = require('os');
 var crypto = require('crypto');
 var getmac = require('getmac');
 
-//options
-exports.options = {
+var defaults = {
     encryption: 'md5', //encryption algorithm
     encoding: 'hex', //encoding format
     keyLength: 20, //default key length
@@ -23,6 +22,14 @@ exports.options = {
     format: true, //format generated key
     separator: '-', //key separator 
     secret: undefined //encyption key default to machine id
+};
+
+//options
+exports.options = defaults;
+
+//restore default settings
+exports.restore = function() {
+    exports.options = defaults;
 };
 
 

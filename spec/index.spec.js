@@ -8,9 +8,14 @@ var keygen = require(path.join(__dirname, '..'));
 
 describe('keygen', function() {
     var key;
+
     var data = {
         uuid: '123dr34'
     };
+
+    beforeEach(function() {
+        keygen.restore();
+    });
 
     it('should be able to obtain host os details', function(done) {
         keygen.os(function(error, os) {
@@ -107,5 +112,19 @@ describe('keygen', function() {
             done(error, keys);
         });
     });
+
+    it('should be able to use different encryption algorithm', function(done) {
+
+        keygen.options.encryption = 'sha256';
+
+        keygen.generate(data, function(error, _key) {
+            //assert
+            expect(error).to.not.exist;
+            expect(_key).to.exist;
+            done(error, _key);
+        });
+
+    });
+
 
 });
